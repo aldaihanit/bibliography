@@ -3,4 +3,6 @@ project(ThamerBiblio C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(ThamerBiblio main.c)
+add_executable(ThamerBiblio main.c
+        BibliographySystem.c
+        BibliographySystem.h)
