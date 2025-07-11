@@ -3,9 +3,7 @@
 #include "BibliographySystem.h"
 
 int main(void) {
+    runSystem();
 
-   while (1) {
-       runSystem();
-   }
     return 0;
 }
