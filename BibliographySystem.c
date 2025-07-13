@@ -197,7 +197,7 @@ void runSystem() {
 
     }
     else if (menu_choice == 7) {
-
+        detect_duplication();
     }
     else if (menu_choice == 8) {
 
@@ -265,11 +265,16 @@ void show_missing_info () {
 }
 
 void detect_duplication () {
-    for ( int i = 0 ; i < entries_number ; i++ ) {
-
+    for (int i = 0 ; i < entries_number ; i++ ) {
+        for (int j = 0 ; j < entries_number ; j++ ) {
+            if (entries[i].type == entries[j].type) {
+                if (entries[i].title == entries[j].title) {
+                    printf("duplicate detected for entry number %d , i");
+                }
+            }
+        }
     }
 }
-
 
 void getEntriesTypesAndCount() {
     for ( int i = 0 ; i < types.uniqueData ; i++ ) {
