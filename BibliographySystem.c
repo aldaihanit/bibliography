@@ -95,6 +95,11 @@ int read_bib_file(const char *filename, BiblioData entries[], int max_entries) {
             current_entry.type[0] = '\0';
             current_entry.title[0] = '\0';
             current_entry.author[0] = '\0';
+            current_entry.page[0] = '\0';
+            current_entry.publisher[0] = '\0';
+            current_entry.booktitle[0] = '\0';
+            current_entry.volume[0] = '\0';
+            current_entry.url[0] = '\0';
             current_entry.year = -1;
             in_entry = 1;
 
@@ -129,7 +134,23 @@ int read_bib_file(const char *filename, BiblioData entries[], int max_entries) {
                 extract_value(line, current_entry.author, name_size);
             } else if (strstr(line, "title")) {
                 extract_value(line, current_entry.title, title_size);
-            } else if (strstr(line, "year")) {
+            }
+            else if (strstr(line, "booktitle")) {
+                extract_value(line, current_entry.booktitle, title_size);
+            }
+            else if (strstr(line, "pages")) {
+                extract_value(line, current_entry.page, title_size);
+            }
+            else if (strstr(line, "publisher")) {
+                extract_value(line, current_entry.publisher, title_size);
+            }
+            else if (strstr(line, "volume")) {
+                extract_value(line, current_entry.volume, title_size);
+            }
+            else if (strstr(line, "url")) {
+                extract_value(line, current_entry.url, title_size);
+            }
+            else if (strstr(line, "year")) {
                 char year_str[10];
                 extract_value(line, year_str, 10);
                 current_entry.year = atoi(year_str);
@@ -144,6 +165,8 @@ int read_bib_file(const char *filename, BiblioData entries[], int max_entries) {
 
 void runSystem() {
    entries_number= read_bib_file("bi.txt",entries,maximumData);
+
+
     showMenu();
 }
  void showMenu() {
@@ -194,13 +217,13 @@ void runSystem() {
         getEntriesTypesAndCount();
     }
     else if (menu_choice == 6) {
-
+        arranged_authors_alphabetically();
     }
     else if (menu_choice == 7) {
         detect_duplication();
     }
     else if (menu_choice == 8) {
-
+        generate_UWE_Harvard_refernce();
     }
     else if (menu_choice == 9) {
        show_missing_info() ;
@@ -265,11 +288,11 @@ void show_missing_info () {
 }
 
 void detect_duplication () {
-    for (int i = 0 ; i < entries_number ; i++ ) {
-        for (int j = 0 ; j < entries_number ; j++ ) {
-            if (entries[i].type == entries[j].type) {
-                if (entries[i].title == entries[j].title) {
-                    printf("duplicate detected for entry number %d , i");
+    for (int i = 0 ; i < entries_number-1 ; i++ ) {
+        for (int j = i+1 ; j < entries_number ; j++ ) {
+            if (strcmp (entries[i].type , entries[j].type) ==0 ) {
+                if (strcmp (entries[i].title , entries[j].title)==0 ) {
+                    printf("duplicate detected for entry number %d  \n" , i);
                 }
             }
         }
@@ -316,4 +339,73 @@ void printEntryData (int index) {
         entries[index].title, entries[index].author, entries[index].type, entries[index].year);
 }
 
+void arranged_authors_alphabetically() {
+    int x = 10;
+    int y = 5 ;
 
+
+    for ( int i = 0 ; i < entries_number -1 ; i++ ) {
+        for (int j = i+1 ; j < entries_number ; j++ ) {
+            int compare_result = strcmp (entries[i].author, entries[j].author);
+           if (compare_result >0) {
+                swapValues(i,j);
+           }
+
+        }
+    }
+    for (int i = 0 ; i < entries_number ; i++ ) {
+        printf("%d  %s \n",i, entries[i].author);
+    }
+
+}
+
+void swapValues(int i , int j) {
+
+    BiblioData entry_temp;
+
+    entry_temp = entries[j];
+    entries[j]=entries[i];
+    entries[i]=entry_temp;
+
+}
+void generate_UWE_Harvard_refernce() {
+    printf("Choose a title to review \n");
+    for ( int i = 0 ; i < entries_number ; i++ ) {
+        printf("%d. %s (%s) \n" ,i, entries[i].title,entries[i].type);
+    }
+    int titleindex ;
+    scanf("%d",& titleindex);
+
+    printf("\n **************************************************************\n");
+    if ( strcmp (entries[titleindex].type ,"inproceedings" )==0 ) {
+        //author. (year) bookTItle title publisher page
+        printf("%s. (%d) %s %s place of publication : %s %s",entries[titleindex].author,entries[titleindex].year
+            ,entries[titleindex].booktitle,entries[titleindex].title,entries[titleindex].publisher
+            ,entries[titleindex].page);
+
+    }
+    else   if ( strcmp (entries[titleindex].type ,"techReport" )==0 ) {
+        //ref for techReport entry
+        printf("%s. (%d) %s Place of publication : %s",entries[titleindex].author,entries[titleindex].year
+        ,entries[titleindex].title,entries[titleindex].publisher
+        );
+    }
+    else   if ( strcmp (entries[titleindex].type ,"article" )==0 ) {
+        //ref for article entry
+        printf("%s. (%d) %s %s %s ",entries[titleindex].author,entries[titleindex].year
+     ,entries[titleindex].title,entries[titleindex].volume,entries[titleindex].page);
+    }
+    else   if ( strcmp (entries[titleindex].type ,"misc" )==0 ) {
+        //ref for misc entry
+        printf("%s. (%d) %s Available from :  %s ",entries[titleindex].author,entries[titleindex].year
+,entries[titleindex].title,entries[titleindex].url);
+    }
+    else   if ( strcmp (entries[titleindex].type ,"book" )==0 ) {
+        //ref for book entry
+        printf("%s. (%d) %s Place of publication : %s",entries[titleindex].author,entries[titleindex].year
+,entries[titleindex].title,entries[titleindex].publisher
+);
+    }
+
+
+}

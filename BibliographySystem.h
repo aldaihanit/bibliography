@@ -15,6 +15,11 @@ typedef struct  {
     char title[title_size];
     char author[name_size];
     int year;
+    char booktitle[type_size];
+    char page[title_size];
+    char publisher[name_size];
+    char volume[name_size];
+    char url[name_size];
 }BiblioData;
 
 typedef  struct {
@@ -36,4 +41,7 @@ void getEntriesTypesAndCount();
 void insertNewEntry();
 void updateFile(char *filename);
 void printEntryData(int index);
+void swapValues(int i , int j);
+void arranged_authors_alphabetically();
+void generate_UWE_Harvard_refernce();
 #endif //BIBLIOGRAPHYSYSTEM_H
